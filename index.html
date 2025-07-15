@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beginner-Friendly Bouncing Ball Animation</title>
+    <link rel="stylesheet" href="style.css" </head>
+
+<body>
+    <div class="container">
+        <h1>Beginner's Bouncing Ball Animation</h1>
+        <p class="instructions">This simple animation demonstrates basic physics concepts using CSS and JavaScript. Try
+            adjusting the controls below!</p>
+
+        <div class="animation-area" id="animationArea">
+            <div class="ball" id="ball"></div>
+            <div class="ground"></div>
+        </div>
+
+        <div class="controls">
+            <div class="slider-container">
+                <span class="label">Bounce Height:</span>
+                <input type="range" id="heightSlider" min="50" max="250" value="150">
+            </div>
+
+            <div class="slider-container">
+                <span class="label">Animation Speed:</span>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+            </div>
+
+            <button id="pauseBtn">Pause</button>
+            <button id="colorBtn">Change Color</button>
+        </div>
+    </div>
+
+    <script>
+        const ball = document.getElementById('ball');
+        const heightSlider = document.getElementById('heightSlider');
+        const speedSlider = document.getElementById('speedSlider');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const colorBtn = document.getElementById('colorBtn');
+
+        let isPaused = false;
+        let animationId;
+        let bounceHeight = 150;
+        let animationSpeed = 5;
+        let yPosition = 0;
+        let direction = 1;
+        let gravity = 1;
+        let velocity = 0;
+        let ballColorIndex = 0;
+        const ballColors = ['#4285f4', '#34a853', '#ea4335', '#fbbc05', '#9b59b6'];
+
+        function animateBall() {
+            if (isPaused) {
+                return;
+            }
+
+            // Update physics
+            velocity += gravity * (animationSpeed / 10);
+            yPosition += velocity * direction;
+
+            // Check for bounce
+            if (yPosition > bounceHeight) {
+                direction = -1;
+                yPosition = bounceHeight;
+                velocity = 0;
+            }
+
+            // Check for top
+            if (yPosition < 0) {
+                direction = 1;
+                yPosition = 0;
+                velocity = 0;
+            }
+
+            // Apply position
+            ball.style.bottom = yPosition + 'px';
+
+            animationId = requestAnimationFrame(animateBall);
+        }
+
+        function changeBallColor() {
+            ballColorIndex = (ballColorIndex + 1) % ballColors.length;
+            ball.style.backgroundColor = ballColors[ballColorIndex];
+        }
+
+        // Event listeners
+        heightSlider.addEventListener('input', function () {
+            bounceHeight = parseInt(this.value);
+        });
+
+        speedSlider.addEventListener('input', function () {
+            animationSpeed = parseInt(this.value);
+        });
+
+        pauseBtn.addEventListener('click', function () {
+            isPaused = !isPaused;
+            if (!isPaused) {
+                animateBall();
+                this.textContent = 'Pause';
+            } else {
+                cancelAnimationFrame(animationId);
+                this.textContent = 'Resume';
+            }
+        });
+
+        colorBtn.addEventListener('click', changeBallColor);
+
+        // Start animation
+        animateBall();
+    </script>
+</body>
+
+</html>
